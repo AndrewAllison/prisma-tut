@@ -1,12 +1,23 @@
-version: '3'
+version: '3.3'
 services:
-  database:
+  # possible alternative to app insights much beter ability to search and filter logging details.
+  seq:
+    environment:
+      - ACCEPT_EULA=Y
+    volumes:
+      - seq:/data
+    ports:
+      - '8081:80' # exposes ui ports
+      - '5341:5341' # handles ingestion http end-point
+    image: 'datalust/seq:latest'
+  postgres:
     image: "postgres" # use latest official postgres version
     ports:
-    - "5438:5432" # using a different default port as I have a postgress db natively running on that port.
+      - "5438:5432" # using a different default port as I have a postgress db natively running on that port.
     env_file:
-      - database.env # configure postgres
+      - .env.postgres # configure postgres
     volumes:
       - database-data:/var/lib/postgresql/data/ # persist data even if container shuts down
 volumes:
   database-data: # named volumes can be managed easier using docker-compose
+  seq:
